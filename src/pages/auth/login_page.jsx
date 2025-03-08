@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LoginForm from "./loginform";
 import RegistrationForm from "./registrationform";
+import bg_image from '../../assets/bg_image.jpg';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,7 +10,7 @@ const LoginPage = () => {
     <div
       className="h-screen flex items-center justify-center bg-cover bg-center"
       style={{
-        backgroundImage: "url('https://source.unsplash.com/random/1600x900')",
+        backgroundImage: `url(${bg_image})`,
       }}
     >
       <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-lg w-96 text-center">
