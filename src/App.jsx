@@ -8,6 +8,16 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import ChemistDashboard from "./pages/chemist/ChemistDashboard";
 import UsherDashboard from "./pages/usher/UsherDashboard";
 
+// ProtectedRoute component to guard routes based on user roles
+const ProtectedRoute = ({ userRole, requiredRole, children }) => {
+  if (!userRole) {
+    return <Navigate to="/" replace />; // Redirect to login if not logged in
+  }
+  if (userRole !== requiredRole) {
+    return <Navigate to="/" replace />; // Redirect to login if the role doesn't match
+  }
+  return children; // If user is logged in and has the correct role, render the route
+};
 
 const App = () => {
   const [userRole, setUserRole] = useState(null);
@@ -31,12 +41,44 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Login Route */}
         <Route path="/" element={<LoginPage />} />
-        {userRole === "admin" && <Route path="/admin-dashboard" element={<AdminDashboard />} />}
-        {userRole === "doctor" && <Route path="/doctor-dashboard" element={<DoctorDashboard />} />}
-        {userRole === "chemist" && <Route path="/chemist-dashboard" element={<ChemistDashboard />} />}
-        {userRole === "usher" && <Route path="/usher-dashboard" element={<UsherDashboard />} />}
-        
+
+        {/* Protected Routes */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute userRole={userRole} requiredRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor-dashboard"
+          element={
+            <ProtectedRoute userRole={userRole} requiredRole="doctor">
+              <DoctorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chemist-dashboard"
+          element={
+            <ProtectedRoute userRole={userRole} requiredRole="chemist">
+              <ChemistDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usher-dashboard"
+          element={
+            <ProtectedRoute userRole={userRole} requiredRole="usher">
+              <UsherDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch-all route to redirect to the login page */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

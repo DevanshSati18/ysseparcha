@@ -18,4 +18,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// If you need `fire` object, initialize it, but currently it is not defined in your code
+// Example: const fire = getSomeService(app);
+
 export { auth, db, storage };
+
