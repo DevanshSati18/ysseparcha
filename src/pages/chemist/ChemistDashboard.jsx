@@ -13,8 +13,9 @@ const ChemistDashboard = () => {
     setLoading(true);
     setError(null);  // Reset any previous errors
     try {
-      // Get the reference to the 'patients' collection, with the couponNumber as the document ID
-      const patientRef = doc(db, 'patients', couponNumber); // Using couponNumber as the document ID
+      // Ensure couponNumber is a number if needed
+      const couponNumberAsString = String(couponNumber);
+      const patientRef = doc(db, 'patients', couponNumberAsString); // Using couponNumber as the document ID
       const patientSnap = await getDoc(patientRef);
       
       if (patientSnap.exists()) {
@@ -105,13 +106,13 @@ const ChemistDashboard = () => {
                   <div className="flex justify-between items-center">
                     <h3 className="font-semibold text-lg text-gray-700">{dept}</h3>
                     <span className="text-sm text-gray-500">
-                      {patientDetails.prescriptions?.[dept]?.prescription || "No Prescription"}
+                      {patientDetails.prescriptions?.[dept] || "No Prescription"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <h3 className="font-semibold text-lg text-gray-700">Remarks</h3>
                     <span className="text-sm text-gray-500">
-                      {patientDetails.prescriptions?.[dept]?.remarks || "No Remarks"}
+                      {patientDetails.remarks?.[dept] || "No Remarks"}
                     </span>
                   </div>
                 </div>

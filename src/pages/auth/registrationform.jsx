@@ -12,6 +12,8 @@ const RegistrationForm = () => {
 
   // Step 2: Medical Check-up State
   const [selectedTreatments, setSelectedTreatments] = useState([]);
+  const [treatmentPrescriptions, setTreatmentPrescriptions] = useState({});
+  const [treatmentRemarks, setTreatmentRemarks] = useState({});
   const [error, setError] = useState(null);
   const [couponNumber, setCouponNumber] = useState(null); // Store generated coupon number
   const [step, setStep] = useState(1); // 1 = User Data, 2 = Medical Data
@@ -50,15 +52,26 @@ const RegistrationForm = () => {
       if (newCouponNumber) {
         // Create a user document in Firestore using the coupon number as primary key
         const userRef = doc(db, "patients", newCouponNumber.toString()); // Using couponNumber as doc ID
-        await setDoc(userRef, {
+        
+        // Prepare data to save in Firestore
+        const userData = {
           name,
           age,
           address,
           mobile,
-          treatments: selectedTreatments,
+          treatments: selectedTreatments, // Array of selected treatments
           couponNumber: newCouponNumber, // Store the generated coupon number
+          prescriptions: {}, // To store prescriptions per treatment
+          remarks: {}, // To store remarks per treatment
+        };
+
+        // Add prescriptions and remarks for each treatment (we no longer display them in the UI)
+        selectedTreatments.forEach((treatment) => {
+          userData.prescriptions[treatment] = treatmentPrescriptions[treatment] || "NA";
+          userData.remarks[treatment] = treatmentRemarks[treatment] || "NA";
         });
 
+        await setDoc(userRef, userData); // Save data to Firestore
         setCouponNumber(newCouponNumber); // Set coupon number for popup display
         setShowSuccessPopup(true); // Show success popup
       }
@@ -85,7 +98,7 @@ const RegistrationForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 overflow-auto max-h-screen">
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         {/* Step 1: User Data Form */}

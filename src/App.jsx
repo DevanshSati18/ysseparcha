@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useState, useEffect } from "react";
 import { auth, db } from "./firebase/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import imagegif from './assets/ysslogo.png';
 import LoginPage from "./pages/auth/login_page";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -24,6 +25,11 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set a timeout to stop the loading state after 2 seconds
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); // 2 seconds timeout
+
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const userRef = doc(db, "users", user.email);
@@ -32,11 +38,28 @@ const App = () => {
           setUserRole(userSnap.data().role);
         }
       }
-      setLoading(false);
+      setLoading(false); // Stop loading once data is fetched or onAuthStateChanged is done
     });
+
+    // Cleanup the timer when the component unmounts
+    return () => clearTimeout(timer);
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen flex-col ">
+        {/* Increased size of image */}
+        <img
+          src={imagegif} // Replace this with your loader image
+          alt="Loading..."
+          className="w-32 h-32 mb-4" // Increased image size and added margin-bottom
+        />
+        
+        {/* Loader */}
+        <div className="w-16 h-16 border-8 border-white border-t-orange-500 border-solid rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <Router>
