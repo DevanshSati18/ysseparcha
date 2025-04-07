@@ -87,7 +87,7 @@ const UserManagement = () => {
         />
         <button
           onClick={fetchUserData}
-          className="ml-2 p-2 bg-blue-500 text-white rounded"
+          className="ml-2 p-2 bg-orange-400 hover:bg-orange-600 text-white rounded"
         >
           Search
         </button>
@@ -147,7 +147,9 @@ const UserManagement = () => {
           </div>
         </div>
       ) : (
-        <p className="mt-4 text-gray-500">No user data found. Please search by email.</p>
+        <p className="mt-4 text-gray-500">
+          No user data found. Please search by email.
+        </p>
       )}
     </div>
   );
