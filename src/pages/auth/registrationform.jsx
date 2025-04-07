@@ -4,27 +4,23 @@ import { collection, query, getDocs, doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const RegistrationForm = () => {
-  // Step 1: User Data State
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
   const [mobile, setMobile] = useState("");
-
-  // Step 2: Medical Check-up State
   const [selectedTreatments, setSelectedTreatments] = useState([]);
   const [treatmentPrescriptions, setTreatmentPrescriptions] = useState({});
   const [treatmentRemarks, setTreatmentRemarks] = useState({});
   const [error, setError] = useState(null);
-  const [couponNumber, setCouponNumber] = useState(null); // Store generated coupon number
-  const [step, setStep] = useState(1); // 1 = User Data, 2 = Medical Data
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // To toggle success popup visibility
+  const [couponNumber, setCouponNumber] = useState(null);
+  const [step, setStep] = useState(1);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const navigate = useNavigate();
 
-  // Function to get the largest coupon number from Firestore
   const getNextCouponNumber = async () => {
     try {
       const usersRef = collection(db, "patients");
-      const q = query(usersRef); // Query all users (patients)
+      const q = query(usersRef);
       const querySnapshot = await getDocs(q);
 
       let maxCoupon = 0;
@@ -35,52 +31,47 @@ const RegistrationForm = () => {
         }
       });
 
-      return maxCoupon + 1; // Return the next coupon number
+      return maxCoupon + 1;
     } catch (error) {
       console.error("Error fetching coupon number: ", error);
       setError("Could not fetch coupon number.");
     }
   };
 
-  // Handle form submission and user creation
   const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const newCouponNumber = await getNextCouponNumber(); // Fetch the next coupon number
+      const newCouponNumber = await getNextCouponNumber();
       if (newCouponNumber) {
-        // Create a user document in Firestore using the coupon number as primary key
-        const userRef = doc(db, "patients", newCouponNumber.toString()); // Using couponNumber as doc ID
-        
-        // Prepare data to save in Firestore
+        const userRef = doc(db, "patients", newCouponNumber.toString());
+
         const userData = {
           name,
           age,
           address,
           mobile,
-          treatments: selectedTreatments, // Array of selected treatments
-          couponNumber: newCouponNumber, // Store the generated coupon number
-          prescriptions: {}, // To store prescriptions per treatment
-          remarks: {}, // To store remarks per treatment
+          treatments: selectedTreatments,
+          couponNumber: newCouponNumber,
+          prescriptions: {},
+          remarks: {},
         };
 
-        // Add prescriptions and remarks for each treatment (we no longer display them in the UI)
         selectedTreatments.forEach((treatment) => {
           userData.prescriptions[treatment] = treatmentPrescriptions[treatment] || "NA";
           userData.remarks[treatment] = treatmentRemarks[treatment] || "NA";
         });
 
-        await setDoc(userRef, userData); // Save data to Firestore
-        setCouponNumber(newCouponNumber); // Set coupon number for popup display
-        setShowSuccessPopup(true); // Show success popup
+        await setDoc(userRef, userData);
+        setCouponNumber(newCouponNumber);
+        setShowSuccessPopup(true);
       }
     } catch (err) {
       setError("Registration failed. Try again.");
     }
   };
 
-  // Handle treatment selection (checkboxes)
   const handleTreatmentChange = (e) => {
     const value = e.target.value;
     setSelectedTreatments((prevTreatments) =>
@@ -90,15 +81,14 @@ const RegistrationForm = () => {
     );
   };
 
-  // Close the success popup after some time or when clicked
   const closePopup = () => {
     setShowSuccessPopup(false);
-    navigate("/dashboard"); // Navigate to dashboard or another page after success
+    navigate("/dashboard");
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 overflow-auto max-h-screen">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 overflow-auto max-h-[80vh]">
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         {/* Step 1: User Data Form */}

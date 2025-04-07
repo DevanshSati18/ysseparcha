@@ -1,9 +1,12 @@
-const PatientOverview =()=>{
+const PatientsOverview =()=>{
     return(
         <>
         <h1>
-            Patients Overview
+            Patients overview
+
         </h1>
         </>
     )
 }
+
+export default PatientsOverview;

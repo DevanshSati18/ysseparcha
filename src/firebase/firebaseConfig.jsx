@@ -1,8 +1,13 @@
+
+
+
+// firebaseConfig.jsx (Ensure this file is using the modular SDK correctly)
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+// Your Firebase configuration object
 const firebaseConfig = {
   apiKey: "AIzaSyD85ccZj0GBgcq3hECN-d-9GWQWpmJNP-E",
   authDomain: "yss-eparcha.firebaseapp.com",
@@ -13,13 +18,14 @@ const firebaseConfig = {
   measurementId: "G-M4GR5T7YV0"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// If you need `fire` object, initialize it, but currently it is not defined in your code
-// Example: const fire = getSomeService(app);
-
+// Export Firebase services
 export { auth, db, storage };
 
