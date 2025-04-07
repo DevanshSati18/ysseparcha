@@ -1,5 +1,4 @@
-
-import { auth,db} from "../../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -55,14 +54,14 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col">
+    <form onSubmit={handleLogin} className="flex flex-col space-y-4">
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="p-2 border rounded mb-2"
+        className="p-3 border border-orange-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
         required
       />
       <input
@@ -70,10 +69,10 @@ const LoginForm = () => {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="p-2 border rounded mb-2"
+        className="p-3 border border-orange-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
         required
       />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+      <button type="submit" className="bg-orange-600 text-white p-3 rounded-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400">
         Login
       </button>
     </form>
