@@ -8,6 +8,7 @@ const RegistrationForm = () => {
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
   const [mobile, setMobile] = useState("");
+  const [gender, setGender] = useState(""); // New state for gender
   const [selectedTreatments, setSelectedTreatments] = useState([]);
   const [treatmentPrescriptions, setTreatmentPrescriptions] = useState({});
   const [treatmentRemarks, setTreatmentRemarks] = useState({});
@@ -15,7 +16,15 @@ const RegistrationForm = () => {
   const [couponNumber, setCouponNumber] = useState(null);
   const [step, setStep] = useState(1);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [currentTime, setCurrentTime] = useState(""); // Store registration time
   const navigate = useNavigate();
+
+  const [nameError, setNameError] = useState("");
+  const [ageError, setAgeError] = useState("");
+  const [addressError, setAddressError] = useState("");
+  const [mobileError, setMobileError] = useState("");
+  const [genderError, setGenderError] = useState("");
+  const [treatmentError, setTreatmentError] = useState("");
 
   const getNextCouponNumber = async () => {
     try {
@@ -40,7 +49,44 @@ const RegistrationForm = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError(null);
+    setNameError("");
+    setAgeError("");
+    setAddressError("");
+    setMobileError("");
+    setGenderError("");
+    setTreatmentError("");
+
+    let formValid = true;
+
+    // Validate the inputs
+    if (!name) {
+      setNameError("Name is required.");
+      formValid = false;
+    }
+    if (!age || isNaN(age) || age <= 0) {
+      setAgeError("Age must be a positive number.");
+      formValid = false;
+    }
+    if (!address) {
+      setAddressError("Address is required.");
+      formValid = false;
+    }
+    if (!mobile || mobile.length !== 10 || isNaN(mobile)) {
+      setMobileError("Mobile number must be 10 digits.");
+      formValid = false;
+    }
+    if (!gender) {
+      setGenderError("Gender is required.");
+      formValid = false;
+    }
+    if (selectedTreatments.length === 0) {
+      setTreatmentError("Please select at least one treatment.");
+      formValid = false;
+    }
+
+    if (!formValid) {
+      return;
+    }
 
     try {
       const newCouponNumber = await getNextCouponNumber();
@@ -52,10 +98,12 @@ const RegistrationForm = () => {
           age,
           address,
           mobile,
+          gender,
           treatments: selectedTreatments,
           couponNumber: newCouponNumber,
           prescriptions: {},
           remarks: {},
+          registrationTime: new Date().toISOString(), // Capture current time in ISO format
         };
 
         selectedTreatments.forEach((treatment) => {
@@ -66,6 +114,7 @@ const RegistrationForm = () => {
 
         await setDoc(userRef, userData);
         setCouponNumber(newCouponNumber);
+        setCurrentTime(new Date().toLocaleString()); // Set the current time when registration is done
         setShowSuccessPopup(true);
       }
     } catch (err) {
@@ -88,7 +137,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className=" bg-white flex justify-center items-start pt-2 px-2">
+    <div className="bg-white flex justify-center items-start pt-2 px-2">
       <div className="bg-white rounded-lg w-full max-w-lg px-4 py-2">
         {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
 
@@ -110,6 +159,7 @@ const RegistrationForm = () => {
                 className="w-full p-1 border border-orange-600 rounded-md mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400"
                 required
               />
+              {nameError && <p className="text-red-500 text-xs">{nameError}</p>}
             </div>
 
             <div className="mb-2">
@@ -124,6 +174,25 @@ const RegistrationForm = () => {
                 className="w-full p-1 border border-orange-600 rounded-md mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400"
                 required
               />
+              {ageError && <p className="text-red-500 text-xs">{ageError}</p>}
+            </div>
+
+            <div className="mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Gender
+              </label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full p-1 border border-orange-600 rounded-md mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400"
+                required
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              {genderError && <p className="text-red-500 text-xs">{genderError}</p>}
             </div>
 
             <div className="mb-2">
@@ -138,6 +207,7 @@ const RegistrationForm = () => {
                 className="w-full p-1 border border-orange-600 rounded-md mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400"
                 required
               />
+              {addressError && <p className="text-red-500 text-xs">{addressError}</p>}
             </div>
 
             <div className="mb-2">
@@ -152,11 +222,13 @@ const RegistrationForm = () => {
                 className="w-full p-1 border border-orange-600 rounded-md mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400"
                 required
               />
+              {mobileError && <p className="text-red-500 text-xs">{mobileError}</p>}
             </div>
 
             <button
               type="button"
               onClick={() => setStep(2)}
+              disabled={!name || !age || !address || !mobile || !gender}
               className="w-full bg-orange-600 text-white p-1 rounded-md mt-1 hover:bg-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-400"
             >
               Next
@@ -188,6 +260,7 @@ const RegistrationForm = () => {
                 </div>
               ))}
             </div>
+            {treatmentError && <p className="text-red-500 text-xs">{treatmentError}</p>}
 
             <button
               type="submit"
@@ -210,6 +283,7 @@ const RegistrationForm = () => {
             <p className="text-2xl font-bold text-orange-600 mb-3">
               {couponNumber}
             </p>
+            <p className="text-base mb-2">Registration Time: {currentTime}</p>
             <button
               onClick={closePopup}
               className="bg-orange-600 text-white px-4 py-1 rounded-md hover:bg-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-400"

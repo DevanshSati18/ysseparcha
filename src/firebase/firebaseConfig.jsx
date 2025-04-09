@@ -1,11 +1,11 @@
-
-
-
 // firebaseConfig.jsx (Ensure this file is using the modular SDK correctly)
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+
+
+
 
 // Your Firebase configuration object
 const firebaseConfig = {

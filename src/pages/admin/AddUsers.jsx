@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { auth, db } from "../../firebase/firebaseConfig"; // Firebase authentication and Firestore
 import { createUserWithEmailAndPassword } from "firebase/auth"; // Firebase authentication to create user
 import { doc, setDoc, getDoc } from "firebase/firestore"; // Firestore functions to store and get data
-import { useNavigate } from "react-router-dom"; // For navigation after user creation
 
 const AddUsers = () => {
   const [userData, setUserData] = useState({
@@ -19,7 +18,6 @@ const AddUsers = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // State for success message
   const [isSubmitting, setIsSubmitting] = useState(false); // To disable form during submission
-  const navigate = useNavigate(); // Navigation after successful user creation
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +28,7 @@ const AddUsers = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the page reload
     setError(""); // Clear any previous errors
     setSuccessMessage(""); // Clear previous success messages
 
@@ -54,15 +52,6 @@ const AddUsers = () => {
 
     if (docSnap.exists()) {
       setError("User with this email already exists.");
-      return;
-    }
-
-    // Get the current user's role (assuming it's stored in the Firestore token)
-    const user = auth.currentUser;
-    const userRole = user ? user : null; // Get the logged-in user
-
-    if (!userRole || userRole.role !== "admin") {
-      setError("Only admins can create new users.");
       return;
     }
 
@@ -96,22 +85,20 @@ const AddUsers = () => {
       // Set success message
       setSuccessMessage("User created successfully!");
 
-      // Reset the form
-      setUserData({
-        name: "",
-        email: "",
-        role: "usher",
-        dept: "",
-        mobileNo: "",
-        age: "",
-        address: "",
-        password: "",
-      });
-
-      // Optionally, you can navigate to another page (e.g., the admin dashboard) or show a success popup.
+      // Reset the form fields after 2 seconds
       setTimeout(() => {
-        navigate("/admin-dashboard"); // Redirect after 2 seconds
-      }, 2000); // Wait 2 seconds before navigating
+        setUserData({
+          name: "",
+          email: "",
+          role: "usher",
+          dept: "",
+          mobileNo: "",
+          age: "",
+          address: "",
+          password: "",
+        });
+        setSuccessMessage(""); // Clear success message after form reset
+      }, 2000); // Wait 2 seconds before resetting the form
 
     } catch (error) {
       setError("Error creating user: " + error.message);
