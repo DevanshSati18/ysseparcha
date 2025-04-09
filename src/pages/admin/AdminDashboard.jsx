@@ -47,7 +47,9 @@ const AdminDashboard = () => {
       <div
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } bg-orange-400 text-white p-4 transition-all duration-300 ease-in-out sm:w-64 md:w-1/5 h-full flex flex-col justify-between`}
+        } bg-orange-400 text-white p-4 transition-all duration-300 ease-in-out sm:w-64 md:w-1/5 h-full flex flex-col justify-between absolute sm:relative z-30 ${
+          sidebarOpen ? "left-0" : "-left-64"
+        } sm:left-0`}
       >
         <div>
           <h2 className="text-2xl font-semibold mb-6 text-center">Dashboard</h2>
@@ -87,11 +89,13 @@ const AdminDashboard = () => {
         {/* Navbar */}
         <div className="bg-orange-400 text-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-20 shadow-md">
           <h1 className="text-2xl">Admin Dashboard</h1>
+
+          {/* Hamburger Button (Drawer toggle) */}
           <button
             onClick={toggleSidebar}
             className="sm:hidden text-white bg-orange-400 p-2 rounded-md"
           >
-            <i className="fa fa-bars"></i>
+            <i className="fa fa-bars"></i> {/* Hamburger icon */}
           </button>
         </div>
 

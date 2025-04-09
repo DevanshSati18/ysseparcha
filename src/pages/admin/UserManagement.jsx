@@ -6,7 +6,7 @@ import { toast } from "react-toastify"; // For showing success/error messages
 const UserManagement = () => {
   const [email, setEmail] = useState(""); // For searching user by email
   const [userData, setUserData] = useState(null); // Store user data fetched from Firestore
-  const [newUserData, setNewUserData] = useState({ name: "", age: "", address: "" }); // Data for editing user
+  const [newUserData, setNewUserData] = useState({ name: "", age: "", address: "", dept: "", mobileNo: "", role: "" }); // Data for editing user
   const [loading, setLoading] = useState(false); // To manage loading state
 
   // Fetch user data based on email (document ID)
@@ -19,7 +19,14 @@ const UserManagement = () => {
 
         if (docSnap.exists()) {
           setUserData(docSnap.data());
-          setNewUserData(docSnap.data()); // Initialize editing data with current user data
+          setNewUserData({
+            name: docSnap.data().name,
+            age: docSnap.data().age,
+            address: docSnap.data().address,
+            dept: docSnap.data().dept,
+            mobileNo: docSnap.data().mobileNo,
+            role: docSnap.data().role, // Setting initial role value from Firestore
+          }); // Initialize editing data with current user data
         } else {
           toast.error("User not found!");
           setUserData(null);
@@ -40,13 +47,17 @@ const UserManagement = () => {
     }));
   };
 
-  // Update user data
+  // Update user data (excluding email and createdAt)
   const handleUpdateUser = async () => {
     if (email) {
       setLoading(true);
       try {
         const userRef = doc(db, "users", email);
-        await updateDoc(userRef, newUserData);
+
+        // Only update the fields that are editable (excluding email and createdAt)
+        const { email, createdAt, ...updateData } = newUserData;
+
+        await updateDoc(userRef, updateData);
         toast.success("User details updated successfully!");
       } catch (error) {
         toast.error("Error updating user data: " + error.message);
@@ -64,7 +75,7 @@ const UserManagement = () => {
         await deleteDoc(userRef);
         toast.success("User deleted successfully!");
         setUserData(null);
-        setNewUserData({ name: "", age: "", address: "" });
+        setNewUserData({ name: "", age: "", address: "", dept: "", mobileNo: "", role: "" });
       } catch (error) {
         toast.error("Error deleting user: " + error.message);
       }
@@ -126,6 +137,43 @@ const UserManagement = () => {
               onChange={handleInputChange}
               className="p-2 border border-gray-300 rounded w-full"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2">Department:</label>
+            <input
+              type="text"
+              name="dept"
+              value={newUserData.dept}
+              onChange={handleInputChange}
+              className="p-2 border border-gray-300 rounded w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2">Mobile Number:</label>
+            <input
+              type="text"
+              name="mobileNo"
+              value={newUserData.mobileNo}
+              onChange={handleInputChange}
+              className="p-2 border border-gray-300 rounded w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2">Role:</label>
+            <select
+              name="role"
+              value={newUserData.role}
+              onChange={handleInputChange}
+              className="p-2 border border-gray-300 rounded w-full"
+            >
+              <option value="admin">Admin</option>
+              <option value="usher">Usher</option>
+              <option value="chemist">Chemist</option>
+              <option value="doctor">Doctor</option>
+            </select>
           </div>
 
           <div className="flex space-x-4">

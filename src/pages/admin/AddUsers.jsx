@@ -107,6 +107,13 @@ const AddUsers = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    // Prevent form submission when Enter is pressed
+    if (e.key === "Enter" && e.target.type !== "submit") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="p-8 bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
       <h2 className="text-2xl font-semibold text-center mb-6">Add New User</h2>
@@ -130,6 +137,7 @@ const AddUsers = () => {
             name="name"
             value={userData.name}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter full name"
           />
@@ -143,6 +151,7 @@ const AddUsers = () => {
             name="email"
             value={userData.email}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter email"
           />
@@ -155,6 +164,7 @@ const AddUsers = () => {
             name="role"
             value={userData.role}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
           >
             <option value="usher">Usher</option>
@@ -173,6 +183,7 @@ const AddUsers = () => {
               name="dept"
               value={userData.dept}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
               className="w-full p-2 border border-gray-300 rounded"
               placeholder="Enter department"
             />
@@ -187,6 +198,7 @@ const AddUsers = () => {
             name="mobileNo"
             value={userData.mobileNo}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter mobile number"
           />
@@ -200,6 +212,7 @@ const AddUsers = () => {
             name="age"
             value={userData.age}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter age"
           />
@@ -213,6 +226,7 @@ const AddUsers = () => {
             name="address"
             value={userData.address}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter address"
           />
@@ -226,6 +240,7 @@ const AddUsers = () => {
             name="password"
             value={userData.password}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter password"
           />
